@@ -1,0 +1,75 @@
+<!--
+TEMPLATE — `/plan-project` fills these placeholders:
+
+  {{PROJECT_NAME}}    — short project name
+  {{TOTAL_CHUNKS}}    — integer
+  {{TODAY}}           — ISO date "YYYY-MM-DD"
+  {{CHUNK_ROWS}}      — rows of the chunk progress table, one per chunk:
+                         | 01 | ⬜ | <title> | [doc](docs/chunks/chunk-01-<slug>.md) | — | — |
+
+Delete this comment block before writing the final STATUS.md.
+-->
+
+# {{PROJECT_NAME}} — Project Status
+
+> **Start a new session:** open Claude Code in this repo and run **`/start-next-chunk`**. Claude will read this file, find the active chunk, and pick up where the last session left off.
+>
+> **Finish a chunk:** run **`/finish-chunk`** when you've verified the chunk is implementation-complete. Claude will run the verification checklist, walk you through manual checks, commit, and advance this file to the next chunk.
+
+## At a glance
+
+- **Progress:** 0 / {{TOTAL_CHUNKS}} chunks complete
+- **Active chunk:** _none yet — next up is Chunk 01_
+- **Last updated:** {{TODAY}}
+- **Last commit:** _none_
+
+---
+
+## Chunk progress
+
+**Legend:** ⬜ pending · 🟡 in progress · 🟢 done · ⛔ blocked
+
+| # | Status | Chunk | Doc | Completed | Commit |
+|---|--------|-------|-----|-----------|--------|
+{{CHUNK_ROWS}}
+
+---
+
+## Decision log
+
+Decisions made during implementation that affect later chunks. Append-only — older entries stay. New chunks should skim this before designing anything new.
+
+_(none yet — first chunk hasn't started)_
+
+---
+
+## Cross-session notes
+
+Things that came up mid-implementation that the next session needs to know. Use this for:
+- "I noticed X was missing from chunk N's doc — handled it ad hoc, may want to formalize"
+- "Found a quirk with `<library>` that affects chunk M"
+- "Out-of-scope idea worth doing later: ..."
+- "The mockup has a typo in section X that I left alone"
+
+_(none yet)_
+
+---
+
+## Open issues
+
+Bugs, surprises, or blockers that need attention before the next chunk can proceed.
+
+_(none yet)_
+
+---
+
+## How to update this file
+
+You shouldn't edit STATUS.md manually unless something has gone wrong — let the slash commands do it. They will:
+
+- `/start-next-chunk` → flip a chunk from ⬜ to 🟡, set "Active chunk" + "Last updated"
+- `/finish-chunk` → flip 🟡 to 🟢, fill Completed + Commit columns, advance "Active chunk" to the next pending chunk, append any decisions/notes the session generated
+- `/log-decision`, `/log-note`, `/log-issue` → append to the corresponding sections mid-session
+- `/add-chunk` → insert a new chunk row + renumber subsequent rows
+
+If you do edit manually, keep the format intact — the slash commands parse the table.

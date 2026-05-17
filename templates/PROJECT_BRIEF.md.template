@@ -1,0 +1,91 @@
+<!--
+TEMPLATE — `/plan-project` fills these placeholders:
+
+  {{PROJECT_NAME}}                — short project name
+  {{TAGLINE}}                     — one-line elevator pitch (rendered in a blockquote up top)
+  {{TOTAL_CHUNKS}}                — integer
+  {{OVERVIEW_PARAGRAPH}}          — one paragraph describing what the project does and who it's for
+  {{TECH_STACK_BULLETS}}          — markdown bullet list of the stack
+  {{CHUNK_TABLE_ROWS}}            — rows for the chunk overview table, one per chunk:
+                                     | 01 | <title> | [doc](docs/chunks/chunk-01-<slug>.md) | <one-line description> |
+  {{ARCHITECTURE_DECISIONS}}      — numbered list of cross-cutting decisions
+  {{OPEN_QUESTIONS}}              — markdown bullets of open questions to flag
+  {{REFERENCE_NOTES}}             — section about reference materials if any (mockup folder, design specs); omit if N/A
+
+Delete this comment block before writing the final PROJECT_BRIEF.md.
+-->
+
+# {{PROJECT_NAME}} — Project Brief
+
+> {{TAGLINE}}
+
+This brief is the front door to {{PROJECT_NAME}}. It lays out the chronological plan as **{{TOTAL_CHUNKS}} chunks**, each shippable on its own. Every chunk links to a detailed doc under [`docs/chunks/`](docs/chunks/) describing scope, files, tasks, prompts, and verification.
+
+> **Developing this project?** Check [`STATUS.md`](STATUS.md) for what's done and what's next. Open a Claude Code session in this repo and run `/start-next-chunk` to pick up where the last session left off. See [`CLAUDE.md`](CLAUDE.md) for the per-session workflow.
+
+---
+
+## What {{PROJECT_NAME}} is
+
+{{OVERVIEW_PARAGRAPH}}
+
+---
+
+## Tech stack
+
+{{TECH_STACK_BULLETS}}
+
+---
+
+## The {{TOTAL_CHUNKS}} chunks
+
+Each chunk is sized to be ~1–3 days of focused work. They're ordered so dependencies flow strictly forward — no chunk references a later one.
+
+| # | Chunk | Doc | One-liner |
+| --- | --- | --- | --- |
+{{CHUNK_TABLE_ROWS}}
+
+---
+
+## Architecture decisions (cross-cutting)
+
+These show up across multiple chunks; stated once here for canonical reference.
+
+{{ARCHITECTURE_DECISIONS}}
+
+---
+
+{{REFERENCE_NOTES}}
+
+---
+
+## Open questions
+
+These are flagged in the relevant chunk doc with a recommendation; collected here for visibility:
+
+{{OPEN_QUESTIONS}}
+
+---
+
+## What "done" looks like
+
+- All {{TOTAL_CHUNKS}} chunks shipped
+- Each chunk verified against its checklist (automated + manual) before commit
+- README documents setup, configuration, and architecture so a new contributor can get oriented quickly
+- No console errors, no broken empty states, no missing focus rings
+
+---
+
+## Conventions for the chunk docs
+
+Every chunk doc under [`docs/chunks/`](docs/chunks/) follows the same template:
+
+1. **Goal** — one paragraph stating what this chunk accomplishes
+2. **Scope: in / out** — explicit boundary so it doesn't drift
+3. **Dependencies** — which prior chunks must be done
+4. **Files to create or modify** — paths
+5. **Detailed tasks** — numbered steps an implementer can follow
+6. **Design references** — pointers into any reference materials with line numbers
+7. **LLM prompt(s)** — system + user template, output shape, schema (if applicable)
+8. **Verification** — how to test the chunk end-to-end
+9. **Open questions** — what's still uncertain

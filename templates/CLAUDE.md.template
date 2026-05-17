@@ -1,0 +1,118 @@
+<!--
+TEMPLATE — `/plan-project` fills these placeholders:
+
+  {{PROJECT_NAME}}             — short project name (e.g. "RecipePlanner")
+  {{TAGLINE}}                  — one-sentence elevator pitch
+  {{TECH_STACK}}               — comma-separated list (e.g. "React 19, TypeScript, Vite")
+  {{TECH_STACK_DESCRIPTION}}   — one paragraph elaborating on the stack and why
+  {{PROJECT_OVERVIEW_FILE}}    — usually "PROJECT_BRIEF.md"
+  {{STATUS_FILE}}              — usually "STATUS.md"
+  {{REFERENCE_DIR}}            — path to reference materials if any, else omit the row from the table
+  {{REFERENCE_DESCRIPTION}}    — one-line description of what's in REFERENCE_DIR
+  {{VERIFICATION_COMMANDS}}    — yaml list, indented properly
+  {{MANUAL_VERIFICATION_SETUP}} — yaml list (may be empty `[]`)
+  {{MANUAL_VERIFICATION_INSTRUCTIONS}} — multi-line free text
+  {{TESTING_FRAMEWORK}}        — e.g. "vitest", "pytest", "cargo test"; or "null" if N/A
+  {{TESTING_SETUP_CHUNK}}      — chunk number where tests start being mandatory; "null" if always or never
+
+Delete this comment block before writing the final CLAUDE.md.
+-->
+
+# {{PROJECT_NAME}} — Project Context (auto-loaded)
+
+{{TAGLINE}}
+
+See **[{{PROJECT_OVERVIEW_FILE}}]({{PROJECT_OVERVIEW_FILE}})** for the full overview.
+
+## Tech stack
+
+{{TECH_STACK_DESCRIPTION}}
+
+## Project commands
+
+These commands are read by the Claude Development Kit's slash commands (`/finish-chunk`, `/start-next-chunk`, etc.). Edit this block if your tooling changes.
+
+```yaml
+project_name: "{{PROJECT_NAME}}"
+tech_stack: [{{TECH_STACK}}]
+
+# Run in parallel during /finish-chunk's automated phase. All must pass before manual verification.
+# Empty list (`verification: []`) is valid for projects with nothing automatable yet.
+verification:
+{{VERIFICATION_COMMANDS}}
+
+# Project-shape-agnostic. Covers web apps with dev servers, CLIs, libraries, pipelines, anything.
+manual_verification:
+  # Commands to run before presenting the checklist. Empty list when nothing needs warming up.
+  setup:
+{{MANUAL_VERIFICATION_SETUP}}
+  # Free-text instructions shown to the user immediately before the checklist.
+  # Tells them WHERE/HOW to perform manual checks for this project's shape.
+  user_instructions: |
+{{MANUAL_VERIFICATION_INSTRUCTIONS}}
+
+testing:
+  framework: {{TESTING_FRAMEWORK}}
+  setup_chunk: {{TESTING_SETUP_CHUNK}}
+
+commit_style:
+  format: "chunk NN: <title>"
+  # No trailer by default. The kit never adds Claude attribution. If you genuinely
+  # want a trailer, uncomment and edit the line below.
+  # trailer: "Reviewed-by: <name>"
+```
+
+## Map of the repo
+
+| Path | What's there |
+| --- | --- |
+| `{{PROJECT_OVERVIEW_FILE}}` | Project overview, chunk table, architecture decisions, open questions |
+| `docs/chunks/chunk-NN-<slug>.md` | Detailed plan per chunk |
+| **`{{STATUS_FILE}}`** | **Single source of truth for "what's done, what's next"** — read this first |
+| `{{REFERENCE_DIR}}` | {{REFERENCE_DESCRIPTION}} |
+| `src/` (or equivalent) | Application code |
+| `.claude/commands/` | Per-project slash command overrides (if any). User-level kit at `~/.claude/commands/` covers the rest. |
+
+## How development works
+
+This project is built one **chunk** at a time. Chunks are listed in **{{STATUS_FILE}}** with their current state. Each chunk is sized to be a single coherent shippable increment.
+
+**Every session works on one chunk.** A new Claude Code session is opened, the chunk is built end-to-end, the chunk is committed, the session ends.
+
+### Session workflow
+
+When a new session starts (you are reading this in a fresh context):
+
+1. **Read [`{{STATUS_FILE}}`]({{STATUS_FILE}})** to find the active chunk.
+2. **Read the chunk's doc** at `docs/chunks/chunk-NN-<slug>.md`.
+3. **Read [`{{PROJECT_OVERVIEW_FILE}}`]({{PROJECT_OVERVIEW_FILE}})** "Cross-cutting architecture decisions."
+4. **Skim {{STATUS_FILE}}'s "Decision log" and "Cross-session notes"** — context the chunk doc didn't have when it was written.
+5. **Confirm scope with the user briefly**. Wait for go-ahead.
+6. **Implement**, using `TodoWrite` to track tasks.
+
+### Slash commands (preferred)
+
+The user can run these from the Claude Development Kit in any session:
+
+- **`/start-next-chunk`** — Reads STATUS, picks up the in-progress chunk (or the next pending), confirms scope, begins.
+- **`/finish-chunk`** — Verifies the current chunk against its doc + the manual verification checklist, commits, advances STATUS.
+- **`/status`** — Read-only state summary.
+- **`/log-decision`, `/log-note`, `/log-issue`** — append to STATUS sections mid-session.
+- **`/audit-plan`** — Plan-agent critique of remaining chunks.
+- **`/add-chunk`** — insert a new chunk mid-project.
+
+If the user types something casual ("continue", "next"), behave as if they ran `/start-next-chunk`.
+
+## Rules of the road
+
+1. **Never skip ahead.** Chunks are ordered by dependency. If chunk N's listed Dependencies aren't all 🟢 done in STATUS, refuse to start N and tell the user which earlier chunk to do first.
+2. **Stay strictly in the chunk's scope.** The chunk doc has explicit "Scope: in" and "Scope: out" lists. Out-of-scope ideas → log them in STATUS "Cross-session notes" instead of sneaking them into this chunk's commit.
+3. **Follow {{PROJECT_OVERVIEW_FILE}}'s architecture decisions.**
+4. **Log decisions you make.** If you choose between two valid implementations in a way that affects future chunks, add a line to STATUS "Decision log" before committing.
+5. **Verify before declaring done.** Every chunk doc has a Verification section. Run through it. Automated checks must pass; the manual gate must pass.
+6. **Commit per chunk minimum.** Sub-commits within a chunk are fine for long chunks. Final commit follows the `commit_style.format` above.
+7. **Don't update {{PROJECT_OVERVIEW_FILE}} or chunk docs without telling the user.** Those are the contract. If a chunk doc was wrong, fix it and log the fix in STATUS "Cross-session notes" so the user knows.
+
+## If you're not sure what to do
+
+Default to: read {{STATUS_FILE}} → if a chunk is 🟡 in progress, resume it; otherwise start the first ⬜ pending. Ask the user to confirm before writing code.

@@ -1,0 +1,69 @@
+<!--
+TEMPLATE — `/plan-project` (and `/add-chunk`) fill these placeholders:
+
+  {{CHUNK_NUMBER}}                — zero-padded 2-digit (e.g. "04")
+  {{CHUNK_TITLE}}                 — short noun-phrase title
+  {{CHUNK_TAGLINE}}               — one-sentence quote-block under the title
+  {{CHUNK_GOAL}}                  — one-paragraph goal statement
+  {{CHUNK_SCOPE_IN}}              — markdown bullets of in-scope items
+  {{CHUNK_SCOPE_OUT}}             — markdown bullets of explicitly-out-of-scope items
+  {{DEPENDENCIES}}                — markdown bullets of prior chunks (e.g. "- Chunk 01 (Foundation)")
+  {{FILES_TO_CREATE_OR_MODIFY}}   — code-fenced file tree with annotations:
+                                     ```
+                                     src/foo.ts                create
+                                     src/bar.ts                modify — add X
+                                     ```
+  {{DETAILED_TASKS}}              — numbered list of implementation steps
+  {{REFERENCES}}                  — markdown bullets pointing into reference materials with line numbers
+  {{LLM_PROMPTS}}                 — full prompt text + schemas, or "(none for this chunk)"
+  {{VERIFICATION}}                — numbered list of verification steps (these become the /finish-chunk checklist)
+  {{OPEN_QUESTIONS}}              — markdown bullets of uncertain decisions to flag
+
+Delete this comment block before writing the final chunk doc.
+-->
+
+# Chunk {{CHUNK_NUMBER}} — {{CHUNK_TITLE}}
+
+> {{CHUNK_TAGLINE}}
+
+## Goal
+
+{{CHUNK_GOAL}}
+
+## Scope
+
+**In:**
+{{CHUNK_SCOPE_IN}}
+
+**Out:**
+{{CHUNK_SCOPE_OUT}}
+
+## Dependencies
+
+{{DEPENDENCIES}}
+
+## Files to create or modify
+
+```
+{{FILES_TO_CREATE_OR_MODIFY}}
+```
+
+## Detailed tasks
+
+{{DETAILED_TASKS}}
+
+## Design references
+
+{{REFERENCES}}
+
+## LLM prompt(s)
+
+{{LLM_PROMPTS}}
+
+## Verification
+
+{{VERIFICATION}}
+
+## Open questions
+
+{{OPEN_QUESTIONS}}
